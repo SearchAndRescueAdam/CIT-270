@@ -12,13 +12,19 @@ const redisClient = Redis.createClient({url:"redis://127.0.0.1:6379"});
 
 const {v4: uuidv4} = require('uuid');
 
-app.use(bodyParser.json()); //This actually uses body parser class
+app.use(bodyParser.json());
 
 app.use(express.static('public'))
 
 app.get("/",(req, res) => {
     res.send("Hello Adam");
 });
+
+app.get("/validate/:loginToken", async(req, res) => {
+    const loginToken = req.params.loginToken;
+    const loginUser = await redisClient.hGet('TokenMap', loginToken);
+    res.send(loginUser);
+}); //Adding the Validate url
 
 app.post('/login', async(req,res) =>{
     const loginUser = req.body.userName;
@@ -27,6 +33,8 @@ app.post('/login', async(req,res) =>{
     const correctPassword = await redisClient.hGet('UserMap', loginUser);
     if (loginPassword==correctPassword){
         const loginToken = uuidv4();
+        await redisClient.hSet('TokenMap',loginToken,loginUser); // add token to Map
+        res.cookie('stedicookie',loginToken);
         res.send(loginToken);
     } else {
         res.status(401);
