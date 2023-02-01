@@ -12,16 +12,21 @@ const redisClient = Redis.createClient({url:"redis://127.0.0.1:6379"});
 
 const {v4: uuidv4} = require('uuid');
 
+const cookieParser = require("cookie-parser");
+
 app.use(bodyParser.json());
 
 app.use(express.static('public'))
+
+app.use(cookieParser());
 
 app.get("/",(req, res) => {
     res.send("Hello Adam");
 });
 
-app.get("/validate/:loginToken", async(req, res) => {
-    const loginToken = req.params.loginToken;
+app.get("/validate", async(req, res) => {
+    const loginToken = req.cookies.stedicookie;
+    console.log("loginToken", loginToken)
     const loginUser = await redisClient.hGet('TokenMap', loginToken);
     res.send(loginUser);
 }); //Adding the Validate url
