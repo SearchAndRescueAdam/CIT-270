@@ -8,7 +8,7 @@ const bodyParser = require ('body-parser')
 
 const Redis = require ('Redis');
 
-const redisClient = Redis.createClient({url:"redis://127.0.0.1:6379"});
+const redisClient = Redis.createClient({url:'redis://127.0.0.1:6379'});
 
 const {v4: uuidv4} = require('uuid');
 
@@ -19,6 +19,26 @@ app.use(bodyParser.json());
 app.use(express.static('public'))
 
 app.use(cookieParser());
+
+app.use(async function (req, res, next){
+    var cookie = req.cookies.stedicookie;
+    if(cookie === undefined && !req.url.includes('login') && !req.url.includes('html')
+    && req.url !== '/' && !req.url.includes('css') && !req.url.includes('js') && !req.url.includes('ico') && !req.url.includes('png')) {
+        res.status(401);
+        res.send('no cookie');
+    }
+    else{
+        res.status(200);
+        next();
+    }
+});
+
+app.post('/rapidsteptest', async (req, res)=>{
+    const steps = req.body;
+    await redisClient.zAdd('Steps',[{score:0,value:JSON.stringify(steps)}]);
+    console.log('Steps', steps);
+    res.send('saved');
+});
 
 app.get("/",(req, res) => {
     res.send("Hello Adam");
