@@ -106,3 +106,5 @@ dist
 # Public and private keys
 server.cert
 server.key
+
+node_modules
