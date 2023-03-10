@@ -108,3 +108,7 @@ server.cert
 server.key
 
 node_modules
+
+ cert.pem
+fullchain.pem
+privkey.pem
