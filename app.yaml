@@ -9,7 +9,7 @@ spec:
       app: cit270adamservice
   template:
     metadata:
-    - name: cit270adamservice
+      name: cit270adamservice
       labels:
         app: cit270adamservice
     spec:
@@ -18,7 +18,7 @@ spec:
         image: mythic-producer-379820
         volumeMounts:
         - name: ssl
-            mountpath: "/etc/letsencrypt/live/SSL"
+          mountpath: "/etc/letsencrypt/live/adamowsley.cit270.com"
         command: ["npm"]
         args: ["run","start"]
         resources:
@@ -28,8 +28,8 @@ spec:
           limits:
             cpu: 0.125
             memory: 600Mi
-          imagePullPolicy: Always
-        volumes:
-        - name: ssl
-          secret:
-            secretName: adamcerts
+        imagePullPolicy: Always
+      volumes:
+      - name: ssl
+        secret:
+          secretName: adamcerts
