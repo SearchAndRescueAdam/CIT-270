@@ -15,10 +15,10 @@ spec:
     spec:
       containers:
       - name: cit270adamservice
-        image: mythic-producer-379820
+        image: gcr.io/mythic-producer-379820/adam-api
         volumeMounts:
         - name: ssl
-          mountpath: "/etc/letsencrypt/live/adamowsley.cit270.com"
+          mountPath: "/etc/letsencrypt/live/adamowsley.cit270.com/"
         command: ["npm"]
         args: ["run","start"]
         resources:
