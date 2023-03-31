@@ -33,15 +33,58 @@ spec:
       - name: ssl
         secret:
           secretName: adamcerts
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: cit270adamservice-loadbalancer
+  name: stedi-adam-nodeport
 spec:
   selector:
-    app: cit270adamservice-loadbalancer
-  type: LoadBalancer
+    app: cit270adamservice
+  type: NodePort
   ports:
-  - port: 443
-    targetPort: 443
+    - port: 80
+      targetPort: 3000
+
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: stedi-adam-certificate
+spec:
+  domains:
+    - adamowsley.cit270.com
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stedi-adam-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: cit270adam
+    networking.gke.io/managed-certificates: stedi-adam-certificate
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: stedi-adam-nodeport
+            port:
+              number: 80
+
+#---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: cit270adamservice-loadbalancer
+# spec:
+#   selector:
+#     app: cit270adamservice
+#   type: LoadBalancer
+#   ports:
+#   - port: 443
+#     targetPort: 443
